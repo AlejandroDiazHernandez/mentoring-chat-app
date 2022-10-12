@@ -1,16 +1,22 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { Room } from "../../utils/constants";
 
-export const SideMenu = (): JSX.Element => {
+interface SideMenuProps {
+  createRoom: () => void;
+  rooms: Room[];
+}
+
+export const SideMenu = ({ createRoom, rooms }: SideMenuProps): JSX.Element => {
   return (
     <SideMenuContainer>
       <RoomListContainer>
-        <li>Primero</li>
-        <li>Segundo</li>
-        <li>Tercero</li>
+        {rooms.map((room) => (
+          <li key={room.name}>{room.name}</li>
+        ))}
       </RoomListContainer>
       <SideMenuFooter>
-        <button type="button">Añadir</button>
+        <button onClick={createRoom}>Añadir</button>
       </SideMenuFooter>
     </SideMenuContainer>
   );
@@ -23,13 +29,13 @@ const SideMenuContainer = styled.section`
   display: flex;
   flex-direction: column;
   padding: var(--chakra-space-4);
-`
+`;
 
 const RoomListContainer = styled.ul`
   height: 100%;
   overflow-y: auto;
-`
+`;
 
-const SideMenuFooter = styled.button`
+const SideMenuFooter = styled.footer`
   margin-top: auto;
-`
+`;
