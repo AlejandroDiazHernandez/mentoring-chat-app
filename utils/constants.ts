@@ -7,5 +7,10 @@ export enum SocketEvents {
 
 export interface Room {
   name: string;
-  participants: unknown[];
+  participants: User[];
+}
+
+export interface User {
+  id: string;
+  name: string;
 }
