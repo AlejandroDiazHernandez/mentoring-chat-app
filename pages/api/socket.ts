@@ -1,7 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { Server, Socket } from "socket.io";
 import type { NextApiRequest } from "next";
-import { Server } from "socket.io";
+
 import { SocketEvents, Room, User } from "../../utils/constants";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+
+type socket = Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 
 const DEFAULT_ROOM = "General";
 const rooms: Room[] = [{
@@ -16,19 +20,21 @@ export default function handler(req: NextApiRequest, res: any) {
     return;
   }
 
+  // Create socket server
   const io = new Server(res.socket?.server);
   res.socket.io = io;
 
-  io.on("connection", (socket) => {
-
-    socket.data.username = `user_${users.length}`;
+  const socketInitialation = (socket: socket) => {
     const user = {
       id: socket.id,
-      name: socket.data.username,
+      name: `user_${users.length}`,
     }
+    socket.data.username = user.name;
     users.push(user);
     rooms[0].participants.push(user);
     socket.join(DEFAULT_ROOM);
+
+    // Defining socket events
     socket.emit(SocketEvents.new_user_connected, rooms);
     socket.on(SocketEvents.create_room, (roomName: string) => {
       const room = { name: roomName, participants: [] };
@@ -36,6 +42,8 @@ export default function handler(req: NextApiRequest, res: any) {
       socket.join(roomName);
       io.emit(SocketEvents.emit_new_room, rooms);
     });
-  });
+  }
+
+  io.on("connection", socketInitialation);
   res.end();
 }
