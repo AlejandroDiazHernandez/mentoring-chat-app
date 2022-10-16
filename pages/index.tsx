@@ -12,25 +12,24 @@ let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 const Home: NextPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
 
-  useEffect(() => {
-    initSocket();
-  }, []);
-
   const initSocket = async () => {
     await fetch("/api/socket");
     socket = io();
-    socket.on(SocketEvents.new_user_connected, (rooms: Room[]) => {
-      console.log("new connection rooms", rooms);
-      setRooms(rooms);
-    });
-    socket.on(SocketEvents.emit_new_room, (room: Room) => {
-      console.log("new room created room", room);
-      setRooms([...rooms, room]);
-    });
+    socket.on(SocketEvents.new_user_connected, setRooms);
+    socket.on(SocketEvents.emit_new_room, setRooms);
   };
 
+  useEffect(() => {
+    if(!socket) initSocket();
+    return () => {
+      if(socket) {
+        socket.off(SocketEvents.disconnect);
+        socket.close();
+      }
+    }
+  }, []);
+
   const createRoom = () => {
-    console.log("creating new room");
     const roomName = `room ${rooms.length + 1}`;
     socket.emit(SocketEvents.create_room, roomName);
   };

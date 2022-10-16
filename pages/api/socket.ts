@@ -10,16 +10,13 @@ export default function handler(req: NextApiRequest, res: any) {
     const io = new Server(res.socket?.server);
     res.socket.io = io;
     io.on("connection", (socket) => {
-      console.log("server socket", socket);
       socket.on(SocketEvents.create_room, (roomName: string) => {
-        console.log("create new room roomName", roomName);
         const room = { name: roomName, participants: [] };
         rooms.push(room);
-        socket.broadcast.emit(SocketEvents.emit_new_room, room);
+        socket.broadcast.emit(SocketEvents.emit_new_room, rooms);
       });
       socket.emit(SocketEvents.new_user_connected, rooms);
     });
-    console.log("socket created");
   }
   res.end();
 }
