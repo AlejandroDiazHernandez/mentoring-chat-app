@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { Room } from "../../utils/constants";
 
-interface SideMenuProps {
+export interface SideMenuProps {
   createRoom: () => void;
   rooms: Room[];
 }
