@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
-import type { NextPage } from "next";
+import styled from '@emotion/styled';
+import type { NextPage } from 'next';
 
-import { MainContent } from "../components/main_content/MainContent";
-import { SideMenu } from "../components/side_menu/SideMenu";
-import { useSocket } from "../hooks/useSocket";
+import { MainContent } from '../components/main_content/MainContent';
+import { SideMenu } from '../components/side_menu/SideMenu';
+import { useSocket } from '../hooks/useSocket';
 
 const Home: NextPage = () => {
   const { createRoom, rooms } = useSocket();
